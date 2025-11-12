@@ -346,10 +346,10 @@ return [
         'icon' => 'fas fa-fw fa-comments',
     ],
     [
-        'text' => 'Client Requests',
-        'url'  => 'client-requests',
-        'icon' => 'fas fa-fw fa-briefcase',
-    ],
+    'text' => 'Client Requests',
+    'url'  => 'client-requests',
+    'icon' => 'fas fa-handshake',
+],
     ],
 
     /*
