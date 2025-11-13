@@ -3,6 +3,8 @@ namespace App\Http\Controllers;
 
 use App\Models\ClientRequest;
 use App\Models\Client;
+use App\Models\Role;
+use App\Models\Skill;
 use Illuminate\Http\Request;
 
 class ClientRequestController extends Controller
@@ -18,34 +20,11 @@ class ClientRequestController extends Controller
         return view('client_requests.create');
     }
 
-    // public function store(Request $request)
-    // {
-    //     $request->validate([
-    //         'client_name' => 'required|string|max:255',
-    //         'role' => 'required|string|max:255',
-    //     ]);
-
-    //     ClientRequest::create($request->all());
-
-    //     return redirect()->route('client-requests.index')->with('success', 'Client request created successfully.');
-    // }
 
     public function edit(ClientRequest $clientRequest)
     {
         return view('client_requests.edit', compact('clientRequest'));
     }
-
-    // public function update(Request $request, ClientRequest $clientRequest)
-    // {
-    //     $request->validate([
-    //         'client_name' => 'required|string|max:255',
-    //         'role' => 'required|string|max:255',
-    //     ]);
-
-    //     $clientRequest->update($request->all());
-
-    //     return redirect()->route('client-requests.index')->with('success', 'Client request updated successfully.');
-    // }
 
     public function destroy(ClientRequest $clientRequest)
     {
@@ -54,49 +33,87 @@ class ClientRequestController extends Controller
     }
 
     public function store(Request $request)
-{
-    $request->validate([
-        'client_name' => 'required|string|max:255',
-        'role' => 'required|string|max:255',
-    ]);
+    {
+        $request->validate([
+            'client_name'        => 'required|string|max:255',
+            'role'               => 'required|string|max:255',
+            'skills'             => 'nullable|array',
+            'skills.*'           => 'string|max:255',
+        ]);
 
-    // Check if client already exists
-    $client = Client::firstOrCreate(
-        ['name' => $request->client_name],
-        [
-            'point_of_contact' => $request->point_of_contact,
-            'point_of_contact_number' => $request->point_of_contact_number,
-        ]
-    );
 
-    $data = $request->all();
-    $data['client_id'] = $client->id;
+        
 
-    ClientRequest::create($data);
+        // Check if client already exists
+        $client = Client::firstOrCreate(
+            ['name' => $request->client_name],
+            [
+                'point_of_contact' => $request->point_of_contact,
+                'point_of_contact_number' => $request->point_of_contact_number,
+            ]
+        );
 
-    return redirect()->route('client-requests.index')->with('success', 'Client request created successfully.');
-}
+        $data = $request->all();
+        $data['client_id'] = $client->id;
+        $role = Role::firstOrCreate(['name' => $request->role]);
+        $data['role_id'] = $role->id;
+        $data['role'] = $request->role;
 
-public function update(Request $request, ClientRequest $clientRequest)
-{
-    $request->validate([
-        'client_name' => 'required|string|max:255',
-        'role' => 'required|string|max:255',
-    ]);
+        $clientRequest =  ClientRequest::create($data);
 
-    $client = Client::firstOrCreate(
-        ['name' => $request->client_name],
-        [
-            'point_of_contact' => $request->point_of_contact,
-            'point_of_contact_number' => $request->point_of_contact_number,
-        ]
-    );
+                // Save skills
+        if ($request->skills) {
+            $skillIds = [];
+            foreach ($request->skills as $skillName) {
+                $skill = Skill::firstOrCreate(['name' => $skillName]);
+                $skillIds[] = $skill->id;
+            }
 
-    $data = $request->all();
-    $data['client_id'] = $client->id;
+            $clientRequest->skills()->sync($skillIds);
+        }
 
-    $clientRequest->update($data);
+        return redirect()->route('client-requests.index')->with('success', 'Client request created successfully.');
+    }
 
-    return redirect()->route('client-requests.index')->with('success', 'Client request updated successfully.');
-}
+    public function update(Request $request, ClientRequest $clientRequest)
+    {
+        $request->validate([
+            'client_name'        => 'required|string|max:255',
+            'role'               => 'required|string|max:255',
+            'skills'             => 'nullable|array',
+            'skills.*'           => 'string|max:255',
+        ]);
+
+
+        $client = Client::firstOrCreate(
+            ['name' => $request->client_name],
+            [
+                'point_of_contact' => $request->point_of_contact,
+                'point_of_contact_number' => $request->point_of_contact_number,
+            ]
+        );
+
+        $data = $request->all();
+       $data['client_id'] = $client->id;
+        $role = Role::firstOrCreate(['name' => $request->role]);
+        $data['role_id'] = $role->id;
+        $data['role'] = $request->role;
+
+        $clientRequest =  ClientRequest::create($data);
+
+                // Save skills
+        if ($request->skills) {
+            $skillIds = [];
+            foreach ($request->skills as $skillName) {
+                $skill = Skill::firstOrCreate(['name' => $skillName]);
+                $skillIds[] = $skill->id;
+            }
+
+            $clientRequest->skills()->sync($skillIds);
+        }
+
+        $clientRequest->update($data);
+
+        return redirect()->route('client-requests.index')->with('success', 'Client request updated successfully.');
+    }
 }

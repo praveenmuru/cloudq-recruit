@@ -8,21 +8,30 @@ class ClientRequest extends Model
 {
     use HasFactory;
 
-protected $fillable = [
-    'client_id',
-    'client_name',
-    'point_of_contact',
-    'point_of_contact_number',
-    'role',
-    'position_status',
-    'skills_sets',
-    'experience',
-    'location',
-    'remarks',
-    'panel_availability',
-];
+
     public function client()
     {
         return $this->belongsTo(Client::class);
     }
+ 
+    public function role()
+    {
+        return $this->belongsTo(Role::class);
+    }
+
+    public function skills()
+    {
+        return $this->belongsToMany(Skill::class, 'client_request_skill');
+    }
+
+    protected $fillable = [
+        'client_id',
+        'client_name',
+        'role_id',
+        'role',
+        'experience',
+        'location',
+        'remarks',
+        'panel_availability',
+    ];
 }

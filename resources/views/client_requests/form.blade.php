@@ -19,18 +19,35 @@
         <label>Point of Contact Number</label>
         <input type="text" name="point_of_contact_number" value="{{ old('point_of_contact_number', $clientRequest->point_of_contact_number ?? '') }}" class="form-control">
     </div>
-    <div class="col-md-6 mt-2">
-        <label>Role</label>
-        <input type="text" name="role" value="{{ old('role', $clientRequest->role ?? '') }}" class="form-control" required>
-    </div>
+   <div class="col-md-6 mt-2">
+    <label>Role</label>
+    <select name="role" id="role" class="form-control select2" required>
+        @foreach(\App\Models\Role::all() as $role)
+            <option value="{{ $role->name }}"
+                {{ old('role', $clientRequest->role->name ?? '') == $role->name ? 'selected' : '' }}>
+                {{ $role->name }}
+            </option>
+        @endforeach
+    </select>
+</div>
     <div class="col-md-6 mt-2">
         <label>Position Status</label>
         <input type="text" name="position_status" value="{{ old('position_status', $clientRequest->position_status ?? '') }}" class="form-control">
     </div>
-    <div class="col-md-6 mt-2">
-        <label>Skill Sets / Requirements</label>
-        <textarea name="skills_sets" class="form-control">{{ old('skills_sets', $clientRequest->skills_sets ?? '') }}</textarea>
-    </div>
+  <div class="col-md-6 mt-2">
+    <label>Skill Sets / Requirements</label>
+    <select name="skills[]" id="skills" class="form-control select2" multiple>
+        @foreach(\App\Models\Skill::all() as $skill)
+            <option value="{{ $skill->name }}"
+                @if(isset($clientRequest))
+                    {{ $clientRequest->skills->pluck('name')->contains($skill->name) ? 'selected' : '' }}
+                @endif
+            >
+                {{ $skill->name }}
+            </option>
+        @endforeach
+    </select>
+</div>
     <div class="col-md-6 mt-2">
         <label>Experience</label>
         <input type="text" name="experience" value="{{ old('experience', $clientRequest->experience ?? '') }}" class="form-control">
@@ -51,16 +68,10 @@
 @push('js')
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
-
 <script>
-$(document).ready(function() {
-    $('#client_name').select2({
-        tags: true, // allow adding new
-        placeholder: 'Select or add a client name',
-        allowClear: true,
-        width: '100%'
-    });
+$('.select2').select2({
+    tags: true,
+    width: '100%'
 });
 </script>
 @endpush
-
