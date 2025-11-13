@@ -24,6 +24,11 @@ class ClientRequest extends Model
         return $this->belongsToMany(Skill::class, 'client_request_skill');
     }
 
+    public function locations()
+{
+    return $this->belongsToMany(Location::class, 'client_request_location');
+}
+
     protected $fillable = [
         'client_id',
         'client_name',

@@ -5,6 +5,7 @@ use App\Models\ClientRequest;
 use App\Models\Client;
 use App\Models\Role;
 use App\Models\Skill;
+use App\Models\Location;
 use Illuminate\Http\Request;
 
 class ClientRequestController extends Controller
@@ -39,12 +40,63 @@ class ClientRequestController extends Controller
             'role'               => 'required|string|max:255',
             'skills'             => 'nullable|array',
             'skills.*'           => 'string|max:255',
+            'locations' => 'nullable|array',
+            'locations.*' => 'string|max:255',
+        ]);
+
+        // Check if client already exists
+        $client = Client::firstOrCreate(
+            ['name' => $request->client_name],
+            [
+                'point_of_contact' => $request->point_of_contact,
+                'point_of_contact_number' => $request->point_of_contact_number,
+            ]
+        );
+
+        $locationIds = [];
+        if ($request->locations) {
+            foreach ($request->locations as $locName) {
+                $location = Location::firstOrCreate(['name' => $locName]);
+                $locationIds[] = $location->id;
+            }
+        }
+
+        $data = $request->all();
+        $data['client_id'] = $client->id;
+        $role = Role::firstOrCreate(['name' => $request->role]);
+        $data['role_id'] = $role->id;
+        $data['role'] = $request->role;
+        print_r($data); exit;
+        $clientRequest =  ClientRequest::create($data);
+        if ($request->skills) {
+            $skillIds = [];
+            foreach ($request->skills as $skillName) {
+                $skill = Skill::firstOrCreate(['name' => $skillName]);
+                $skillIds[] = $skill->id;
+            }
+
+            $clientRequest->skills()->sync($skillIds);
+        }
+        $clientRequest->locations()->sync($locationIds);
+  
+
+        return redirect()->route('client-requests.index')->with('success', 'Client request created successfully.');
+    }
+
+    public function update(Request $request, ClientRequest $clientRequest)
+    {
+
+
+        $request->validate([
+            'client_name'        => 'required|string|max:255',
+            'role'               => 'required|string|max:255',
+            'skills'             => 'nullable|array',
+            'skills.*'           => 'string|max:255',
+            'locations' => 'nullable|array',
+            'locations.*' => 'string|max:255',
         ]);
 
 
-        
-
-        // Check if client already exists
         $client = Client::firstOrCreate(
             ['name' => $request->client_name],
             [
@@ -59,7 +111,14 @@ class ClientRequestController extends Controller
         $data['role_id'] = $role->id;
         $data['role'] = $request->role;
 
-        $clientRequest =  ClientRequest::create($data);
+        $locationIds = [];
+        if ($request->locations) {
+            foreach ($request->locations as $locName) {
+                $location = Location::firstOrCreate(['name' => $locName]);
+                $locationIds[] = $location->id;
+            }
+        }
+
 
                 // Save skills
         if ($request->skills) {
@@ -71,46 +130,7 @@ class ClientRequestController extends Controller
 
             $clientRequest->skills()->sync($skillIds);
         }
-
-        return redirect()->route('client-requests.index')->with('success', 'Client request created successfully.');
-    }
-
-    public function update(Request $request, ClientRequest $clientRequest)
-    {
-        $request->validate([
-            'client_name'        => 'required|string|max:255',
-            'role'               => 'required|string|max:255',
-            'skills'             => 'nullable|array',
-            'skills.*'           => 'string|max:255',
-        ]);
-
-
-        $client = Client::firstOrCreate(
-            ['name' => $request->client_name],
-            [
-                'point_of_contact' => $request->point_of_contact,
-                'point_of_contact_number' => $request->point_of_contact_number,
-            ]
-        );
-
-        $data = $request->all();
-       $data['client_id'] = $client->id;
-        $role = Role::firstOrCreate(['name' => $request->role]);
-        $data['role_id'] = $role->id;
-        $data['role'] = $request->role;
-
-        $clientRequest =  ClientRequest::create($data);
-
-                // Save skills
-        if ($request->skills) {
-            $skillIds = [];
-            foreach ($request->skills as $skillName) {
-                $skill = Skill::firstOrCreate(['name' => $skillName]);
-                $skillIds[] = $skill->id;
-            }
-
-            $clientRequest->skills()->sync($skillIds);
-        }
+        $clientRequest->locations()->sync($locationIds);
 
         $clientRequest->update($data);
 

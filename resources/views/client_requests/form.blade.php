@@ -52,10 +52,20 @@
         <label>Experience</label>
         <input type="text" name="experience" value="{{ old('experience', $clientRequest->experience ?? '') }}" class="form-control">
     </div>
-    <div class="col-md-6 mt-2">
-        <label>Location</label>
-        <input type="text" name="location" value="{{ old('location', $clientRequest->location ?? '') }}" class="form-control">
-    </div>
+<div class="col-md-6 mt-2">
+    <label>Location</label>
+    <select name="locations[]" id="locations" class="form-control select2" multiple>
+        @foreach(\App\Models\Location::all() as $loc)
+            <option value="{{ $loc->name }}"
+                @if(isset($clientRequest) && $clientRequest->locations->pluck('name')->contains($loc->name))
+                    selected
+                @endif
+            >
+                {{ $loc->name }}
+            </option>
+        @endforeach
+    </select>
+</div>
     <div class="col-md-6 mt-2">
         <label>Panel Availability</label>
         <input type="text" name="panel_availability" value="{{ old('panel_availability', $clientRequest->panel_availability ?? '') }}" class="form-control">
