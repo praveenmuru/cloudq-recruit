@@ -8,16 +8,21 @@ class ClientRequest extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'client_name',
-        'point_of_contact',
-        'point_of_contact_number',
-        'role',
-        'position_status',
-        'skills_sets',
-        'experience',
-        'location',
-        'remarks',
-        'panel_availability',
-    ];
+protected $fillable = [
+    'client_id',
+    'client_name',
+    'point_of_contact',
+    'point_of_contact_number',
+    'role',
+    'position_status',
+    'skills_sets',
+    'experience',
+    'location',
+    'remarks',
+    'panel_availability',
+];
+    public function client()
+    {
+        return $this->belongsTo(Client::class);
+    }
 }

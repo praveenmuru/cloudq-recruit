@@ -1,8 +1,16 @@
 <div class="row">
-    <div class="col-md-6">
-        <label>Client Name</label>
-        <input type="text" name="client_name" value="{{ old('client_name', $clientRequest->client_name ?? '') }}" class="form-control" required>
-    </div>
+<div class="col-md-6">
+    <label>Client Name</label>
+    <select name="client_name" id="client_name" class="form-control select2" required>
+        <option value="">Select or type to add</option>
+        @foreach(\App\Models\Client::orderBy('name')->get() as $client)
+            <option value="{{ $client->name }}"
+                {{ old('client_name', $clientRequest->client->name ?? '') == $client->name ? 'selected' : '' }}>
+                {{ $client->name }}
+            </option>
+        @endforeach
+    </select>
+</div>
     <div class="col-md-6">
         <label>Point of Contact</label>
         <input type="text" name="point_of_contact" value="{{ old('point_of_contact', $clientRequest->point_of_contact ?? '') }}" class="form-control">
@@ -40,3 +48,19 @@
         <textarea name="remarks" class="form-control">{{ old('remarks', $clientRequest->remarks ?? '') }}</textarea>
     </div>
 </div>
+@push('js')
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+
+<script>
+$(document).ready(function() {
+    $('#client_name').select2({
+        tags: true, // allow adding new
+        placeholder: 'Select or add a client name',
+        allowClear: true,
+        width: '100%'
+    });
+});
+</script>
+@endpush
+

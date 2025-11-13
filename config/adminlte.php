@@ -63,7 +63,7 @@ return [
     |
     */
 
-    'logo' => '<b>Admin</b>LTE',
+    'logo' => '<b>CloudQ</b> Recruit',
     'logo_img' => 'vendor/adminlte/dist/img/AdminLTELogo.png',
     'logo_img_class' => 'brand-image img-circle elevation-3',
     'logo_img_xl' => null,
@@ -310,46 +310,29 @@ return [
             'topnav_right' => true,
         ],
 
-        // Sidebar items:
-        [
-            'type' => 'sidebar-menu-search',
-            'text' => 'search',
-        ],
-        [
-            'text' => 'blog',
-            'url' => 'admin/blog',
-            'can' => 'manage-blog',
-        ],
-        [
-            'text' => 'pages',
-            'url' => 'admin/pages',
-            'icon' => 'far fa-fw fa-file',
-            'label' => 4,
-            'label_color' => 'success',
-        ],
-           // Navbar items:
-    ['header' => 'MAIN NAVIGATION'],
+       
+        ['header' => 'MAIN NAVIGATION'],
 
-    [
-        'text' => 'Dashboard',
-        'url'  => 'dashboard',
-        'icon' => 'fas fa-fw fa-tachometer-alt',
-    ],
-    [
-        'text' => 'Candidates',
-        'url'  => 'candidates',
-        'icon' => 'fas fa-fw fa-users',
-    ],
-    [
-        'text' => 'Interviews',
-        'url'  => 'interviews',
-        'icon' => 'fas fa-fw fa-comments',
-    ],
-    [
-    'text' => 'Client Requests',
-    'url'  => 'client-requests',
-    'icon' => 'fas fa-handshake',
-],
+        [
+            'text' => 'Dashboard',
+            'url'  => 'dashboard',
+            'icon' => 'fas fa-fw fa-tachometer-alt',
+        ],
+        [
+            'text' => 'Candidates',
+            'url'  => 'candidates',
+            'icon' => 'fas fa-fw fa-users',
+        ],
+        [
+            'text' => 'Interviews',
+            'url'  => 'interviews',
+            'icon' => 'fas fa-fw fa-comments',
+        ],
+        [
+        'text' => 'Client Requests',
+        'url'  => 'client-requests',
+        'icon' => 'fas fa-handshake',
+        ],
     ],
 
     /*
