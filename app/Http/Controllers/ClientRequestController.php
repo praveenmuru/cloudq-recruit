@@ -66,7 +66,6 @@ class ClientRequestController extends Controller
         $role = Role::firstOrCreate(['name' => $request->role]);
         $data['role_id'] = $role->id;
         $data['role'] = $request->role;
-        print_r($data); exit;
         $clientRequest =  ClientRequest::create($data);
         if ($request->skills) {
             $skillIds = [];
