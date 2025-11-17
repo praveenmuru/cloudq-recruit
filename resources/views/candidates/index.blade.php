@@ -68,7 +68,13 @@
                         <td>{{ $candidate->title }}</td>
                         <td>{{ $candidate->client }}</td>
                         <td>{{ $candidate->keywordsString() }}</td>
-                        <td>{{ $candidate->location }}</td>
+
+                         @foreach($locations as $id => $name)
+                            @if ($candidate->location_id == $id)
+                                <td>{{ $name }}</td>                  
+                            @endif
+                        @endforeach
+                        <td>{{ $candidate->location_id }}</td>
                         <td>{{ $candidate->work_type }}</td>
                         <td>{{ $candidate->ctc ?? '-' }} / {{ $candidate->ectc ?? '-' }}</td>
                         <td>{{ optional($candidate->date_of_joining)->format('Y-m-d') ?? '-' }}</td>
