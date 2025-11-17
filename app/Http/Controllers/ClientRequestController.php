@@ -10,11 +10,53 @@ use Illuminate\Http\Request;
 
 class ClientRequestController extends Controller
 {
-    public function index()
-    {
-        $requests = ClientRequest::latest()->paginate(10);
-        return view('client_requests.index', compact('requests'));
+public function index(Request $request)
+{
+    $query = ClientRequest::with(['client', 'role', 'skills', 'locations']);
+
+    // Filter by Client
+    if ($request->client_id) {
+        $query->where('client_id', $request->client_id);
     }
+
+    // Filter by Role
+    if ($request->role_id) {
+        $query->where('role_id', $request->role_id);
+    }
+
+    // Filter by Skills (pivot)
+    if ($request->skills) {
+        $query->whereHas('skills', function ($q) use ($request) {
+            $q->whereIn('skills.id', $request->skills);
+        });
+    }
+
+    // Filter by Locations (pivot)
+    if ($request->locations) {
+        $query->whereHas('locations', function ($q) use ($request) {
+            $q->whereIn('locations.id', $request->locations);
+        });
+    }
+
+    // Filter by Date Range
+    if ($request->from_date && $request->to_date) {
+        $query->whereBetween('created_at', [
+            $request->from_date . ' 00:00:00',
+            $request->to_date . ' 23:59:59'
+        ]);
+    }
+
+    $requests = $query->latest()->paginate(10);
+
+    return view('client_requests.index', [
+        'requests' => $requests,
+        'clients' => \App\Models\Client::orderBy('name')->get(),
+        'roles' => \App\Models\Role::orderBy('name')->get(),
+        'skills' => \App\Models\Skill::orderBy('name')->get(),
+        'locations' => \App\Models\Location::orderBy('name')->get(),
+    ]);
+}
+
 
     public function create()
     {
@@ -66,6 +108,8 @@ class ClientRequestController extends Controller
         $role = Role::firstOrCreate(['name' => $request->role]);
         $data['role_id'] = $role->id;
         $data['role'] = $request->role;
+        $data['position_status'] = $request->position_status;
+      
         $clientRequest =  ClientRequest::create($data);
         if ($request->skills) {
             $skillIds = [];
@@ -105,10 +149,16 @@ class ClientRequestController extends Controller
         );
 
         $data = $request->all();
+
         $data['client_id'] = $client->id;
         $role = Role::firstOrCreate(['name' => $request->role]);
         $data['role_id'] = $role->id;
         $data['role'] = $request->role;
+        $data['position_status'] = $request->position_status;
+
+        // print_r($data);
+        // exit;
+
 
         $locationIds = [];
         if ($request->locations) {
