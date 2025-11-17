@@ -1,7 +1,10 @@
 <div class="form-group">
     <label>Client Name</label>
-    <input type="text" name="client_name" class="form-control" value="{{ old('client_name', $interview->client_name ?? '') }}" required>
-</div>
+<select name="client_id" class="form-control select2">
+    @foreach($clients as $id => $name)
+        <option value="{{ $id }}">{{ $name }}</option>
+    @endforeach
+</select></div>
 
 <div class="form-group">
     <label>Role</label>
@@ -10,7 +13,11 @@
 
 <div class="form-group">
     <label>Candidate Name</label>
-    <input type="text" name="candidate_name" class="form-control" value="{{ old('candidate_name', $interview->candidate_name ?? '') }}" required>
+    <select name="candidate_id" class="form-control select2">
+    @foreach($candidates as $id => $name)
+        <option value="{{ $id }}">{{ $name }}</option>
+    @endforeach
+</select>
 </div>
 
 <div class="form-group">
@@ -63,3 +70,13 @@
     <label>Joining Date</label>
     <input type="date" name="joining_date" class="form-control" value="{{ old('joining_date', $interview->joining_date ?? '') }}">
 </div>
+@push('js')
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+<script>
+$('.select2').select2({
+    tags: true,
+    width: '100%'
+});
+</script>
+@endpush

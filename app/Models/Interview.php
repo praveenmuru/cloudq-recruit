@@ -8,17 +8,26 @@ class Interview extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'client_name',
-        'role',
-        'candidate_name',
-        'cv_status',
-        'interview_date',
-        'interview_time',
-        'client_round',
-        'interview_status',
-        'offer_status',
-        'offered_salary',
-        'joining_date',
-    ];
+protected $fillable = [
+    'client_id',
+    'candidate_id',
+    'role',
+    'cv_status',
+    'interview_date',
+    'interview_time',
+    'client_round',
+    'interview_status',
+    'offer_status',
+    'offered_salary',
+    'joining_date',
+];
+    public function client()
+{
+    return $this->belongsTo(Client::class);
+}
+
+public function candidate()
+{
+    return $this->belongsTo(Candidate::class);
+}
 }
