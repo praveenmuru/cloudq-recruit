@@ -6,11 +6,40 @@ use Illuminate\Http\Request;
 
 class InterviewController extends Controller
 {
-    public function index()
-    {
-        $interviews = Interview::latest()->paginate(10);
-        return view('interviews.index', compact('interviews'));
+public function index(Request $request)
+{
+    $query = Interview::query();
+
+    // Filters
+    if ($request->filled('client_name')) {
+        $query->where('client_name', 'like', '%' . $request->client_name . '%');
     }
+
+    if ($request->filled('role')) {
+        $query->where('role', 'like', '%' . $request->role . '%');
+    }
+
+    if ($request->filled('cv_status')) {
+        $query->where('cv_status', $request->cv_status);
+    }
+
+    if ($request->filled('interview_status')) {
+        $query->where('interview_status', $request->interview_status);
+    }
+
+    if ($request->filled('offer_status')) {
+        $query->where('offer_status', $request->offer_status);
+    }
+
+    if ($request->filled('from_date') && $request->filled('to_date')) {
+        $query->whereBetween('interview_date', [$request->from_date, $request->to_date]);
+    }
+
+    $interviews = $query->latest()->paginate(10)->appends($request->all());
+
+    return view('interviews.index', compact('interviews'));
+}
+
 
     public function create()
     {
