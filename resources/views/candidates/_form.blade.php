@@ -16,12 +16,13 @@
             <x-adminlte-input name="client" label="Client" value="{{ old('client', $candidate->client ?? '') }}" />
             <div class="form-group">
                 <label for="skills">Keywords</label>
-                <select name="skills[]" id="skills" class="form-control select2" multiple>
+                <select id="skills" name="skills[]" class="form-control select2" multiple>
                     @foreach($skills as $id => $name)
-                        <option value="{{ $id }}" 
-                            {{ (collect(old('skills', $candidate?->skills->pluck('id') ?? []))->contains($id)) ? 'selected' : '' }}>
-                            {{ $name }}
-                        </option>
+                       <option value="{{ $id }}" 
+    {{ collect(old('skills', $candidate?->skills->pluck('id') ?? []))->contains($id) ? 'selected' : '' }}>
+    {{ $name }}
+</option>
+
                     @endforeach
                 </select>
             </div>
@@ -103,9 +104,11 @@
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script>
-    $(function () {
+    $(document).ready(function() {
         $('.select2').select2({
-            placeholder: 'Select option',
+            tags: true, // allow new entries
+            tokenSeparators: [','],
+            placeholder: 'Select or add new',
             width: '100%'
         });
     });

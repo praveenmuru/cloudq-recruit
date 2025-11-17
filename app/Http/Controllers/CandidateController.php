@@ -5,6 +5,7 @@ use App\Models\Candidate;
 use App\Models\Skill;
 use App\Models\Location;
 use App\Http\Requests\CandidateRequest;
+use Illuminate\Support\Str;
 
 class CandidateController extends Controller
 {
@@ -60,17 +61,104 @@ class CandidateController extends Controller
         return view('candidates.create', compact('skills', 'locations'));
     }
 
-    public function store(CandidateRequest $request)
-    {
-        $data = $request->validated();
+public function store(CandidateRequest $request)
+{
+    $data = $request->validated();
 
-        $candidate = Candidate::create($data);
-
-        $candidate->skills()->sync($request->input('skills', []));
-        $candidate->preferredLocations()->sync($request->input('preferred_locations', []));
-
-        return redirect()->route('candidates.index')->with('success', 'Candidate created.');
+    // --- Handle dynamic Skills ---
+    $skillsInput = $request->input('skills', []);
+    $skillIds = [];
+    foreach ($skillsInput as $skill) {
+        if (is_numeric($skill)) {
+            $skillIds[] = $skill;
+        } else {
+            // Create new skill if doesn't exist
+            $newSkill = Skill::firstOrCreate(['name' => Str::title(trim($skill))]);
+            $skillIds[] = $newSkill->id;
+        }
     }
+
+    // --- Handle dynamic Locations ---
+    $locationId = null;
+    if ($request->filled('location_id')) {
+        $loc = $request->input('location_id');
+        if (is_numeric($loc)) {
+            $locationId = $loc;
+        } else {
+            $newLocation = Location::firstOrCreate(['name' => Str::title(trim($loc))]);
+            $locationId = $newLocation->id;
+        }
+    }
+
+    // --- Handle Preferred Locations ---
+    $preferredInput = $request->input('preferred_locations', []);
+    $preferredIds = [];
+    foreach ($preferredInput as $loc) {
+        if (is_numeric($loc)) {
+            $preferredIds[] = $loc;
+        } else {
+            $newLocation = Location::firstOrCreate(['name' => Str::title(trim($loc))]);
+            $preferredIds[] = $newLocation->id;
+        }
+    }
+
+    $data['location_id'] = $locationId;
+    $candidate = Candidate::create($data);
+
+    $candidate->skills()->sync($skillIds);
+    $candidate->preferredLocations()->sync($preferredIds);
+
+    return redirect()->route('candidates.index')->with('success', 'Candidate created successfully.');
+}
+
+public function update(CandidateRequest $request, Candidate $candidate)
+{
+    $data = $request->validated();
+
+    // --- Handle dynamic Skills ---
+    $skillsInput = $request->input('skills', []);
+    $skillIds = [];
+    foreach ($skillsInput as $skill) {
+        if (is_numeric($skill)) {
+            $skillIds[] = $skill;
+        } else {
+            $newSkill = Skill::firstOrCreate(['name' => Str::title(trim($skill))]);
+            $skillIds[] = $newSkill->id;
+        }
+    }
+
+    // --- Handle dynamic Locations ---
+    $locationId = null;
+    if ($request->filled('location_id')) {
+        $loc = $request->input('location_id');
+        if (is_numeric($loc)) {
+            $locationId = $loc;
+        } else {
+            $newLocation = Location::firstOrCreate(['name' => Str::title(trim($loc))]);
+            $locationId = $newLocation->id;
+        }
+    }
+
+    // --- Handle Preferred Locations ---
+    $preferredInput = $request->input('preferred_locations', []);
+    $preferredIds = [];
+    foreach ($preferredInput as $loc) {
+        if (is_numeric($loc)) {
+            $preferredIds[] = $loc;
+        } else {
+            $newLocation = Location::firstOrCreate(['name' => Str::title(trim($loc))]);
+            $preferredIds[] = $newLocation->id;
+        }
+    }
+
+    $data['location_id'] = $locationId;
+    $candidate->update($data);
+
+    $candidate->skills()->sync($skillIds);
+    $candidate->preferredLocations()->sync($preferredIds);
+
+    return redirect()->route('candidates.index')->with('success', 'Candidate updated successfully.');
+}
 
     public function edit(Candidate $candidate)
     {
@@ -82,23 +170,14 @@ class CandidateController extends Controller
         return view('candidates.edit', compact('candidate', 'skills', 'locations'));
     }
 
-    public function update(CandidateRequest $request, Candidate $candidate)
-    {
-        $data = $request->validated();
-
-        $candidate->update($data);
-
-        $candidate->skills()->sync($request->input('skills', []));
-        $candidate->preferredLocations()->sync($request->input('preferred_locations', []));
-
-        return redirect()->route('candidates.index')->with('success', 'Candidate updated.');
-    }
 
     public function show(Candidate $candidate)
     {
         $candidate->load(['skills', 'location', 'preferredLocations']);
         return view('candidates.show', compact('candidate'));
     }
+
+
     public function destroy(Candidate $candidate)
     {
         $candidate->delete();

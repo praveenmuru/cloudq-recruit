@@ -15,17 +15,16 @@ class CandidateRequest extends FormRequest
    public function rules()
 {
     return [
+        'skills' => 'nullable|array',
+        'skills.*' => 'nullable',
+
+        'location_id' => 'nullable',
+        'preferred_locations' => 'nullable|array',
+        'preferred_locations.*' => 'nullable',
+
         'client' => 'nullable|string|max:255',
         'date_of_joining' => 'nullable|date',
         'title' => 'nullable|string|max:255',
-
-        'skills' => 'nullable|array',
-        'skills.*' => 'exists:skills,id',
-
-        'location_id' => 'nullable|exists:locations,id',
-        'preferred_locations' => 'nullable|array',
-        'preferred_locations.*' => 'exists:locations,id',
-
         'name' => 'required|string|max:255',
         'phone' => 'nullable|string|max:30',
         'alternate_phone' => 'nullable|string|max:30',
