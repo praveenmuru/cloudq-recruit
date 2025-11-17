@@ -15,13 +15,14 @@
             <x-adminlte-input name="title" label="Title" value="{{ old('title', $candidate->title ?? '') }}" />
             <x-adminlte-input name="client" label="Client" value="{{ old('client', $candidate->client ?? '') }}" />
             <div class="form-group">
-                <label for="keywords">Keywords</label>
-                <select id="keywords" name="keywords[]" class="form-control" multiple="multiple">
-                    @if($keywords)
-                        @foreach($keywords as $k)
-                            <option value="{{ $k }}" selected>{{ $k }}</option>
-                        @endforeach
-                    @endif
+                <label for="skills">Keywords</label>
+                <select name="skills[]" id="skills" class="form-control select2" multiple>
+                    @foreach($skills as $id => $name)
+                        <option value="{{ $id }}" 
+                            {{ (collect(old('skills', $candidate?->skills->pluck('id') ?? []))->contains($id)) ? 'selected' : '' }}>
+                            {{ $name }}
+                        </option>
+                    @endforeach
                 </select>
             </div>
 
@@ -54,9 +55,29 @@
 
             <x-adminlte-input name="notice_period" label="Notice Period" value="{{ old('notice_period', $candidate->notice_period ?? '') }}" />
             <x-adminlte-input name="earliest_availability" label="Earliest Availability" value="{{ old('earliest_availability', $candidate->earliest_availability ?? '') }}" />
-            <x-adminlte-input name="location" label="Location" value="{{ old('location', $candidate->location ?? '') }}" />
-            <x-adminlte-input name="preferred_location" label="Preferred Location" value="{{ old('preferred_location', $candidate->preferred_location ?? '') }}" />
+<div class="form-group">
+    <label for="location_id">Current Location</label>
+    <select name="location_id" id="location_id" class="form-control select2">
+        <option value="">-- Select Location --</option>
+        @foreach($locations as $id => $name)
+            <option value="{{ $id }}" {{ old('location_id', $candidate->location_id ?? '') == $id ? 'selected' : '' }}>{{ $name }}</option>
+        @endforeach
+    </select>
+</div>            
+<div class="form-group">
+    <label for="preferred_locations">Preferred Locations</label>
+    <select name="preferred_locations[]" id="preferred_locations" class="form-control select2" multiple>
+        @foreach($locations as $id => $name)
 
+               <option value="{{ $id }}" 
+                            {{ (collect(old('preferred_locations', $candidate?->preferredLocations->pluck('id') ?? []))->contains($id)) ? 'selected' : '' }}>
+                            {{ $name }}
+                        </option>
+
+
+        @endforeach
+    </select>
+</div>
             <div class="form-group">
                 <label for="work_type">Work Type</label>
                 <select name="work_type" id="work_type" class="form-control">
@@ -83,10 +104,8 @@
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script>
     $(function () {
-        $('#keywords').select2({
-            tags: true,
-            tokenSeparators: [','],
-            placeholder: 'Add keywords (e.g. php, magento, laravel)',
+        $('.select2').select2({
+            placeholder: 'Select option',
             width: '100%'
         });
     });

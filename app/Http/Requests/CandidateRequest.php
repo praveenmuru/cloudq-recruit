@@ -12,36 +12,37 @@ class CandidateRequest extends FormRequest
         return auth()->check();
     }
 
-    public function rules()
-    {
-        return [
-            'client' => 'nullable|string|max:255',
-            'date_of_joining' => 'nullable|date',
-            'title' => 'nullable|string|max:255',
-            'keywords' => 'nullable|array',
-            'keywords.*' => 'string|max:100',
+   public function rules()
+{
+    return [
+        'client' => 'nullable|string|max:255',
+        'date_of_joining' => 'nullable|date',
+        'title' => 'nullable|string|max:255',
 
-            'name' => 'required|string|max:255',
-            'phone' => 'nullable|string|max:30',
-            'alternate_phone' => 'nullable|string|max:30',
-            'email' => 'nullable|email|max:255',
-            'current_company' => 'nullable|string|max:255',
-            'current_role' => 'nullable|string|max:255',
+        'skills' => 'nullable|array',
+        'skills.*' => 'exists:skills,id',
 
-            'total_exp' => 'nullable|numeric|min:0|max:100',
-            'relevant_exp' => 'nullable|numeric|min:0|max:100',
+        'location_id' => 'nullable|exists:locations,id',
+        'preferred_locations' => 'nullable|array',
+        'preferred_locations.*' => 'exists:locations,id',
 
-            'ctc' => 'nullable|numeric|min:0',
-            'ectc' => 'nullable|numeric|min:0',
+        'name' => 'required|string|max:255',
+        'phone' => 'nullable|string|max:30',
+        'alternate_phone' => 'nullable|string|max:30',
+        'email' => 'nullable|email|max:255',
+        'current_company' => 'nullable|string|max:255',
+        'current_role' => 'nullable|string|max:255',
+        'total_exp' => 'nullable|numeric|min:0|max:100',
+        'relevant_exp' => 'nullable|numeric|min:0|max:100',
+        'ctc' => 'nullable|numeric|min:0',
+        'ectc' => 'nullable|numeric|min:0',
+        'notice_period' => 'nullable|string|max:255',
+        'earliest_availability' => 'nullable|string|max:255',
+        'work_type' => 'nullable|in:Remote,Inoffice,Hybrid',
+        'reason_for_job_change' => 'nullable|string',
+        'remarks' => 'nullable|string',
+        'resume_link' => 'nullable|url|max:1000',
+    ];
+}
 
-            'notice_period' => 'nullable|string|max:255',
-            'earliest_availability' => 'nullable|string|max:255',
-            'location' => 'nullable|string|max:255',
-            'preferred_location' => 'nullable|string|max:255',
-            'work_type' => 'nullable|in:Remote,Inoffice,Hybrid',
-            'reason_for_job_change' => 'nullable|string',
-            'remarks' => 'nullable|string',
-            'resume_link' => 'nullable|url|max:1000',
-        ];
-    }
 }

@@ -9,13 +9,33 @@
 @section('content')
 <div class="card">
     <div class="card-header d-flex justify-content-between align-items-center">
-        <form class="form-inline" method="GET" action="{{ route('candidates.index') }}">
-            <input type="text" name="name" class="form-control mr-2" placeholder="Name" value="{{ request('name') }}">
-            <input type="text" name="client" class="form-control mr-2" placeholder="Client" value="{{ request('client') }}">
-            <input type="text" name="keyword" class="form-control mr-2" placeholder="Keyword" value="{{ request('keyword') }}">
-            <button class="btn btn-primary mr-2">Filter</button>
-            <a href="{{ route('candidates.index') }}" class="btn btn-default">Reset</a>
-        </form>
+   <form class="form-inline" method="GET" action="{{ route('candidates.index') }}">
+    <input type="text" name="name" class="form-control mr-2" placeholder="Name" value="{{ request('name') }}">
+
+    <select name="skill_id" class="form-control mr-2 select2" style="min-width:150px">
+        <option value="">Skill</option>
+        @foreach($skills as $id => $name)
+            <option value="{{ $id }}" {{ request('skill_id') == $id ? 'selected' : '' }}>{{ $name }}</option>
+        @endforeach
+    </select>
+
+    <select name="location_id" class="form-control mr-2 select2" style="min-width:150px">
+        <option value="">Current Location</option>
+        @foreach($locations as $id => $name)
+            <option value="{{ $id }}" {{ request('location_id') == $id ? 'selected' : '' }}>{{ $name }}</option>
+        @endforeach
+    </select>
+
+    <select name="preferred_location_id" class="form-control mr-2 select2" style="min-width:150px">
+        <option value="">Preferred Location</option>
+        @foreach($locations as $id => $name)
+            <option value="{{ $id }}" {{ request('preferred_location_id') == $id ? 'selected' : '' }}>{{ $name }}</option>
+        @endforeach
+    </select>
+
+    <button class="btn btn-primary mr-2">Filter</button>
+    <a href="{{ route('candidates.index') }}" class="btn btn-default">Reset</a>
+</form>
 
         <a href="{{ route('candidates.create') }}" class="btn btn-success">New Candidate</a>
     </div>

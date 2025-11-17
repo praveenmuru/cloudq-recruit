@@ -1,87 +1,104 @@
 <?php
-
 namespace App\Http\Controllers;
-
-use App\Http\Requests\CandidateRequest;
-use App\Models\Candidate;
 use Illuminate\Http\Request;
+use App\Models\Candidate;
+use App\Models\Skill;
+use App\Models\Location;
+use App\Http\Requests\CandidateRequest;
 
 class CandidateController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth'); // adjust as needed
-    }
-
     public function index(Request $request)
     {
-        $query = Candidate::query();
+        $query = Candidate::with(['skills', 'location', 'preferredLocations']);
 
-        // Filters (client, name, keyword, location, work_type, date range)
+        // --- Filters ---
         if ($request->filled('client')) {
             $query->where('client', 'like', '%'.$request->client.'%');
         }
+
         if ($request->filled('name')) {
             $query->where('name', 'like', '%'.$request->name.'%');
         }
-        if ($request->filled('keyword')) {
-            $keyword = $request->keyword;
-            $query->whereJsonContains('keywords', $keyword);
+
+        if ($request->filled('skill_id')) {
+            $query->whereHas('skills', fn($q) => $q->where('skill_id', $request->skill_id));
         }
-        if ($request->filled('location')) {
-            $query->where('location', 'like', '%'.$request->location.'%');
+
+        if ($request->filled('location_id')) {
+            $query->where('location_id', $request->location_id);
         }
+
+        if ($request->filled('preferred_location_id')) {
+            $query->whereHas('preferredLocations', fn($q) => $q->where('locations.id', $request->preferred_location_id));
+        }
+
         if ($request->filled('work_type')) {
             $query->where('work_type', $request->work_type);
         }
+
         if ($request->filled('joined_from')) {
             $query->whereDate('date_of_joining', '>=', $request->joined_from);
         }
+
         if ($request->filled('joined_to')) {
             $query->whereDate('date_of_joining', '<=', $request->joined_to);
         }
 
         $candidates = $query->orderBy('created_at', 'desc')->paginate(20)->withQueryString();
 
-        return view('candidates.index', compact('candidates'));
+        $skills = Skill::orderBy('name')->pluck('name', 'id');
+        $locations = Location::orderBy('name')->pluck('name', 'id');
+
+        return view('candidates.index', compact('candidates', 'skills', 'locations'));
     }
 
     public function create()
     {
-        return view('candidates.create');
+        $skills = Skill::orderBy('name')->pluck('name', 'id');
+        $locations = Location::orderBy('name')->pluck('name', 'id');
+        return view('candidates.create', compact('skills', 'locations'));
     }
 
     public function store(CandidateRequest $request)
     {
         $data = $request->validated();
 
-        // Ensure keywords are array
-        $data['keywords'] = $data['keywords'] ?? [];
+        $candidate = Candidate::create($data);
 
-        Candidate::create($data);
+        $candidate->skills()->sync($request->input('skills', []));
+        $candidate->preferredLocations()->sync($request->input('preferred_locations', []));
 
         return redirect()->route('candidates.index')->with('success', 'Candidate created.');
     }
 
-    public function show(Candidate $candidate)
-    {
-        return view('candidates.show', compact('candidate'));
-    }
-
     public function edit(Candidate $candidate)
     {
-        return view('candidates.edit', compact('candidate'));
+        $skills = Skill::orderBy('name')->pluck('name', 'id');
+        $locations = Location::orderBy('name')->pluck('name', 'id');
+
+        $candidate->load(['skills', 'preferredLocations']);
+
+        return view('candidates.edit', compact('candidate', 'skills', 'locations'));
     }
 
     public function update(CandidateRequest $request, Candidate $candidate)
     {
         $data = $request->validated();
-        $data['keywords'] = $data['keywords'] ?? [];
+
         $candidate->update($data);
+
+        $candidate->skills()->sync($request->input('skills', []));
+        $candidate->preferredLocations()->sync($request->input('preferred_locations', []));
 
         return redirect()->route('candidates.index')->with('success', 'Candidate updated.');
     }
 
+    public function show(Candidate $candidate)
+    {
+        $candidate->load(['skills', 'location', 'preferredLocations']);
+        return view('candidates.show', compact('candidate'));
+    }
     public function destroy(Candidate $candidate)
     {
         $candidate->delete();

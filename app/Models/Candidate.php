@@ -13,7 +13,6 @@ class Candidate extends Model
         'client',
         'date_of_joining',
         'title',
-        'keywords',
         'name',
         'phone',
         'alternate_phone',
@@ -26,8 +25,7 @@ class Candidate extends Model
         'ectc',
         'notice_period',
         'earliest_availability',
-        'location',
-        'preferred_location',
+        'location_id',
         'work_type',
         'reason_for_job_change',
         'remarks',
@@ -36,16 +34,39 @@ class Candidate extends Model
 
     protected $casts = [
         'date_of_joining' => 'date',
-        'keywords' => 'array',
-        'total_exp' => 'decimal:2',
-        'relevant_exp' => 'decimal:2',
-        'ctc' => 'decimal:2',
-        'ectc' => 'decimal:2',
     ];
 
-    // Helper to join keywords string
-    public function keywordsString()
+    // ------------------- Relationships -------------------
+
+    public function skills()
     {
-        return $this->keywords ? implode(', ', $this->keywords) : '';
+        return $this->belongsToMany(Skill::class, 'candidate_skill');
     }
+
+    public function location()
+    {
+        return $this->belongsTo(Location::class, 'location_id');
+    }
+
+    public function preferredLocations()
+    {
+        return $this->belongsToMany(Location::class, 'candidate_preferred_location');
+    }
+
+    // Helper Accessors
+    public function skillNames()
+    {
+        return $this->skills->pluck('name')->implode(', ');
+    }
+
+    public function preferredLocationNames()
+    {
+        return $this->preferredLocations->pluck('name')->implode(', ');
+    }
+
+    public function keywordsString()
+{
+    // Example: if Candidate has a relation to skills
+    return $this->skills->pluck('name')->implode(', ');
+}
 }
