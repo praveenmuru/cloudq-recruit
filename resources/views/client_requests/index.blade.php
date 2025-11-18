@@ -88,6 +88,32 @@
 </form>
 
 
+<form action="{{ route('client-requests.import') }}" method="POST" enctype="multipart/form-data" class="mb-4">
+    @csrf
+    <div class="row g-2 align-items-end">
+        <div class="col-md-4">
+            <label class="form-label">Upload Excel</label>
+            <input type="file" name="excel_file" class="form-control" accept=".xlsx,.xls,.csv" required>
+        </div>
+        <div class="col-md-2">
+            <button class="btn btn-success">Import</button>
+        </div>
+        <div class="col-md-6">
+            <small class="text-muted">Required headers: Client Name, POC, Role, Position Status, Skills Sets/Requirements, Experience (Yrs), Location, Remarks, Panel Availability</small>
+        </div>
+    </div>
+</form>
+
+@if(session('success'))
+    <div class="alert alert-success mt-3">{{ session('success') }}</div>
+@endif
+
+@if(session('error'))
+    <div class="alert alert-danger mt-3">{{ session('error') }}</div>
+@endif
+
+
+
 <table class="table table-bordered table-hover">
     <thead>
         <tr>

@@ -7,6 +7,9 @@ use App\Models\Role;
 use App\Models\Skill;
 use App\Models\Location;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\ClientRequestImport;
+
 
 class ClientRequestController extends Controller
 {
@@ -185,4 +188,36 @@ public function index(Request $request)
 
         return redirect()->route('client-requests.index')->with('success', 'Client request updated successfully.');
     }
+
+
+
+public function import(Request $request)
+{
+    $request->validate([
+        'excel_file' => 'required|file|mimes:xlsx,xls,csv',
+    ]);
+
+    try {
+        // For small files (synchronous)
+        Excel::import(new ClientRequestImport, $request->file('excel_file'));
+
+        // If you prefer queueing, use:
+        // Excel::queueImport(new ClientRequestImport, $request->file('excel_file'));
+
+        return redirect()->back()->with('success', 'Import completed successfully.');
+    } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
+        $failures = $e->failures();
+        // format a simple error response
+        return redirect()->back()->with('error', 'Import failed. Check file format and headers.');
+    } catch (\Exception $e) {
+        \Log::error('Import error: '.$e->getMessage());
+        return redirect()->back()->with('error', 'An unexpected error occurred during import.');
+    }
+}
+
+public function show(ClientRequest $clientRequest)
+{
+    return view('client_requests.edit', compact('clientRequest'));
+}
+
 }

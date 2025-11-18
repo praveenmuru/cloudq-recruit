@@ -40,6 +40,7 @@ class ClientRequest extends Model
         'position_status',
         'location',
         'remarks',
+        'skills_sets',
         'panel_availability',
     ];
 }

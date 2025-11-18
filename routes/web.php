@@ -19,7 +19,7 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('interviews', InterviewController::class);
     Route::resource('client-requests', ClientRequestController::class);
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-
+    Route::post('client-requests/import', [ClientRequestController::class, 'import'])->name('client-requests.import');
     
 });
 
