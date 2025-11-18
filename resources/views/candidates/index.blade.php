@@ -74,8 +74,9 @@
                                 <td>{{ $name }}</td>                  
                             @endif
                         @endforeach
-                        <td>{{ $candidate->location_id }}</td>
+
                         <td>{{ $candidate->work_type }}</td>
+                       
                         <td>{{ $candidate->ctc ?? '-' }} / {{ $candidate->ectc ?? '-' }}</td>
                         <td>{{ optional($candidate->date_of_joining)->format('Y-m-d') ?? '-' }}</td>
                         <td>
