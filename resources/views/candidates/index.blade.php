@@ -37,7 +37,22 @@
     <a href="{{ route('candidates.index') }}" class="btn btn-default">Reset</a>
 </form>
 
-        <a href="{{ route('candidates.create') }}" class="btn btn-success">New Candidate</a>
+
+    {{-- IMPORT FORM + NEW BUTTON --}}
+    <form method="POST" action="{{ route('candidates.import') }}" enctype="multipart/form-data" class="form-inline">
+        @csrf
+
+        <input type="file" name="file" required class="form-control-file mr-2">
+
+        <button type="submit" class="btn btn-warning mr-2">
+            <i class="fas fa-file-upload"></i> Import
+        </button>
+
+        <a href="{{ route('candidates.create') }}" class="btn btn-success">
+            <i class="fas fa-plus"></i> New Candidate
+        </a>
+    </form>
+
     </div>
 
     <div class="card-body table-responsive p-0">
