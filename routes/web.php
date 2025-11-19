@@ -20,10 +20,16 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('client-requests', ClientRequestController::class);
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::post('client-requests/import', [ClientRequestController::class, 'import'])->name('client-requests.import');
-  
 });
 
 
-  Route::post('candidates/import', [CandidateController::class, 'import'])
+    Route::post('candidates/import', [CandidateController::class, 'import'])
     ->name('candidates.import')
     ->middleware('auth');
+
+    Route::post('interviews/import', [InterviewController::class, 'import'])
+    ->name('interviews.import')
+    ->middleware('auth');
+
+
+    

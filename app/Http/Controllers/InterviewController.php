@@ -5,6 +5,8 @@ use App\Models\Interview;
 use App\Models\Client;
 use App\Models\Candidate;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\InterviewImport;
 
 class InterviewController extends Controller
 {
@@ -125,4 +127,19 @@ class InterviewController extends Controller
         $interview->delete();
         return redirect()->route('interviews.index')->with('success', 'Interview deleted successfully!');
     }
+
+
+
+    public function import(Request $request)
+    {
+
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls,csv'
+        ]);
+
+        Excel::import(new InterviewImport, $request->file('file'));
+
+        return redirect()->route('interviews.index')->with('success', 'Interview data imported successfully!');
+    }
+
 }
