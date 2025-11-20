@@ -6,6 +6,9 @@ use App\Models\Candidate;
 use App\Models\Interview;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\ToCollection;
+use App\Models\CvStatus;
+use App\Models\InterviewStatus;
+use App\Models\OfferStatus;
 
 class InterviewImport implements ToCollection
 {
@@ -26,11 +29,19 @@ class InterviewImport implements ToCollection
             // 2. CANDIDATE
             $candidate = Candidate::firstOrCreate(['name' => trim($row[2])]);
 
+            $cv = CvStatus::firstOrCreate(['name' => trim($row[3])]);
+$interviewStatus = InterviewStatus::firstOrCreate(['name' => trim($row[7])]);
+$offerStatus = OfferStatus::firstOrCreate(['name' => trim($row[8])]);
+
+
             // 3. Create Interview
             Interview::create([
                 'client_id'        => $client->id,
                 'candidate_id'     => $candidate->id,
                 'role'             => $row[1] ?? null,
+                'cv_status_id' => $cv->id,
+                'interview_status_id' => $interviewStatus->id,
+                'offer_status_id' => $offerStatus->id,
                 // 'cv_status'        => $row[3] ?? null,
                 'interview_date'   => $this->excelDate($row[4]),
                 // 'interview_time'   => $row[5],

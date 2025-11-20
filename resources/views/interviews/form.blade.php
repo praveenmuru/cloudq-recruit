@@ -22,11 +22,11 @@
 
 <div class="form-group">
     <label>CV Status</label>
-    <select name="cv_status" class="form-control">
-        <option value="Pending">Pending</option>
-        <option value="Shortlisted">Shortlisted</option>
-        <option value="Rejected">Rejected</option>
-    </select>
+   <select name="cv_status" class="form-control select2" required>
+    @foreach($cvStatuses as $status)
+        <option value="{{ $status->name }}">{{ $status->name }}</option>
+    @endforeach
+</select>
 </div>
 
 <div class="form-group">
@@ -46,19 +46,23 @@
 
 <div class="form-group">
     <label>Interview Status</label>
-    <select name="interview_status" class="form-control">
-        <option value="Pending">Pending</option>
-        <option value="Selected">Selected</option>
-        <option value="Rejected">Rejected</option>
-    </select>
+   <select name="interview_status" class="form-control select2" required>
+    @foreach($interviewStatuses as $status)
+        <option value="{{ $status->name }}">{{ $status->name }}</option>
+    @endforeach
+</select>
+
+
 </div>
 
 <div class="form-group">
     <label>Offer Status</label>
-    <select name="offer_status" class="form-control">
-        <option value="Not Offered">Not Offered</option>
-        <option value="Offered">Offered</option>
-    </select>
+<select name="offer_status" class="form-control select2" required>
+    @foreach($offerStatuses as $status)
+        <option value="{{ $status->name }}">{{ $status->name }}</option>
+    @endforeach
+</select>
+
 </div>
 
 <div class="form-group">
