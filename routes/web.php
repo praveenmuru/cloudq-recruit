@@ -18,8 +18,17 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('candidates', CandidateController::class);
     Route::resource('interviews', InterviewController::class);
     Route::resource('client-requests', ClientRequestController::class);
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    // Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::post('client-requests/import', [ClientRequestController::class, 'import'])->name('client-requests.import');
+     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+    // Chart / data endpoints
+    Route::get('/dashboard/stats/overview', [DashboardController::class, 'overviewJson'])->name('dashboard.stats.overview');
+    Route::get('/dashboard/stats/hiring-funnel', [DashboardController::class, 'hiringFunnelJson'])->name('dashboard.stats.funnel');
+    Route::get('/dashboard/stats/candidates-trend', [DashboardController::class, 'candidatesTrendJson'])->name('dashboard.stats.candidates_trend');
+    Route::get('/dashboard/stats/interviews-by-day', [DashboardController::class, 'interviewsByDayJson'])->name('dashboard.stats.interviews_by_day');
+
+
 });
 
 
