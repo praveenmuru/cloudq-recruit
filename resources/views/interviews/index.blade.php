@@ -154,7 +154,7 @@
                 <tr>
                     <td>{{ $interview->client->name }}</td>
                     <td>{{ $interview->role }}</td>
-                    <td>{{ $interview->candidate->name }}</td>
+                    <td><a href="/candidates/{{  $interview->candidate_id}}">{{ $interview->candidate->name }} </a></td>
                     <td>{{ $interview->cv_status }}</td>
                     <td>{{ $interview->interview_date }}</td>
                     <td>{{ $interview->interview_time }}</td>

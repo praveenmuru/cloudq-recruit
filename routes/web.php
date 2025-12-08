@@ -27,6 +27,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard/stats/hiring-funnel', [DashboardController::class, 'hiringFunnelJson'])->name('dashboard.stats.funnel');
     Route::get('/dashboard/stats/candidates-trend', [DashboardController::class, 'candidatesTrendJson'])->name('dashboard.stats.candidates_trend');
     Route::get('/dashboard/stats/interviews-by-day', [DashboardController::class, 'interviewsByDayJson'])->name('dashboard.stats.interviews_by_day');
+    // Route::get('/clients/{client}', [ClientController::class, 'show'])->name('clients.show');
 
 
 });

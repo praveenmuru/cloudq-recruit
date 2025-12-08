@@ -81,7 +81,15 @@
                         <td>{{ $candidate->id }}</td>
                         <td>{{ $candidate->name }}</td>
                         <td>{{ $candidate->title }}</td>
-                        <td>{{ $candidate->client }}</td>
+                        <?php 
+                        // $client_id = 0;
+                        // foreach ($clients as $id => $name) {
+                        //     if ($candidate->client == $name) {
+                        //         $client_id = $id;
+                        //     }
+                        // } ?>
+                        {{-- <td><a href="/clients/{{ $client_id }}" target="_blank">{{ $candidate->client }} </a></td> --}}
+                        <td>{{ $candidate->client }} </td>
                         <td>{{ $candidate->keywordsString() }}</td>
 
                          @foreach($locations as $id => $name)

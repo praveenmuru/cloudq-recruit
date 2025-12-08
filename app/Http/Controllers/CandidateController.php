@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use App\Models\Candidate;
 use App\Models\Skill;
 use App\Models\Location;
+use App\Models\Client;
 use App\Http\Requests\CandidateRequest;
 use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel;
@@ -12,7 +13,7 @@ class CandidateController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Candidate::with(['skills', 'location', 'preferredLocations']);
+        $query = Candidate::with(['skills', 'location', 'preferredLocations',]);
 
         // --- Filters ---
         if ($request->filled('client')) {
@@ -51,8 +52,9 @@ class CandidateController extends Controller
 
         $skills = Skill::orderBy('name')->pluck('name', 'id');
         $locations = Location::orderBy('name')->pluck('name', 'id');
+        $clients = Client::orderBy('name')->pluck('name', 'id');
 
-        return view('candidates.index', compact('candidates', 'skills', 'locations'));
+        return view('candidates.index', compact('candidates', 'skills', 'locations','clients'));
     }
 
     public function create()
